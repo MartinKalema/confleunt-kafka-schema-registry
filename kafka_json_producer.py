@@ -39,3 +39,25 @@ SECURITY_PROTOCOL = 'SASL_SSL'
 SSL_MACHENISM = 'PLAIN'
 SCHEMA_REGISTRY_API_KEY = 'P5U2TEKAHVBFPHZU'
 SCHEMA_REGISTRY_API_SECRET = 'TeIuTyU0PhRU3HWEYLmUmi2boTsZx1NZL4p+RDgczQq28XovwwxYj4Wg/G8/vqE4'
+
+
+def sasl_conf():
+
+    sasl_conf = {'sasl.mechanism': SSL_MACHENISM,
+                 # Set to SASL_SSL to enable TLS support.
+                #  'security.protocol': 'SASL_PLAINTEXT'}
+                'bootstrap.servers':BOOTSTRAP_SERVER,
+                'security.protocol': SECURITY_PROTOCOL,
+                'sasl.username': API_KEY,
+                'sasl.password': API_SECRET_KEY
+                }
+    return sasl_conf
+
+
+
+def schema_config():
+    return {'url':ENDPOINT_SCHEMA_URL,
+    
+    'basic.auth.user.info':f"{SCHEMA_REGISTRY_API_KEY}:{SCHEMA_REGISTRY_API_SECRET}"
+
+    }
