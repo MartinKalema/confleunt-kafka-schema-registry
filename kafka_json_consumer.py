@@ -1,5 +1,6 @@
 from confluent_kafka import Consumer
 from confluent_kafka.serialization import SerializationContext, MessageField
+from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.json_schema import JSONDeserializer
 
 
@@ -51,71 +52,79 @@ class Car:
 
 def main(topic):
 
-    schema_str = """
-    {
-  "$id": "http://example.com/myURI.schema.json",
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "additionalProperties": false,
-  "description": "Sample schema to help you get started.",
-  "properties": {
-    "brand": {
-      "description": "The type(v) type is used.",
-      "type": "string"
-    },
-    "car_name": {
-      "description": "The type(v) type is used.",
-      "type": "string"
-    },
-    "engine": {
-      "description": "The type(v) type is used.",
-      "type": "number"
-    },
-    "fuel_type": {
-      "description": "The type(v) type is used.",
-      "type": "string"
-    },
-    "km_driven": {
-      "description": "The type(v) type is used.",
-      "type": "number"
-    },
-    "max_power": {
-      "description": "The type(v) type is used.",
-      "type": "number"
-    },
-    "mileage": {
-      "description": "The type(v) type is used.",
-      "type": "number"
-    },
-    "model": {
-      "description": "The type(v) type is used.",
-      "type": "string"
-    },
-    "seats": {
-      "description": "The type(v) type is used.",
-      "type": "number"
-    },
-    "seller_type": {
-      "description": "The type(v) type is used.",
-      "type": "string"
-    },
-    "selling_price": {
-      "description": "The type(v) type is used.",
-      "type": "number"
-    },
-    "transmission_type": {
-      "description": "The type(v) type is used.",
-      "type": "string"
-    },
-    "vehicle_age": {
-      "description": "The type(v) type is used.",
-      "type": "number"
-    }
-  },
-  "title": "SampleRecord",
-  "type": "object"
-}
-    """
-    json_deserializer = JSONDeserializer(schema_str,
+#     schema_str = """
+#     {
+#   "$id": "http://example.com/myURI.schema.json",
+#   "$schema": "http://json-schema.org/draft-07/schema#",
+#   "additionalProperties": false,
+#   "description": "Sample schema to help you get started.",
+#   "properties": {
+#     "brand": {
+#       "description": "The type(v) type is used.",
+#       "type": "string"
+#     },
+#     "car_name": {
+#       "description": "The type(v) type is used.",
+#       "type": "string"
+#     },
+#     "engine": {
+#       "description": "The type(v) type is used.",
+#       "type": "number"
+#     },
+#     "fuel_type": {
+#       "description": "The type(v) type is used.",
+#       "type": "string"
+#     },
+#     "km_driven": {
+#       "description": "The type(v) type is used.",
+#       "type": "number"
+#     },
+#     "max_power": {
+#       "description": "The type(v) type is used.",
+#       "type": "number"
+#     },
+#     "mileage": {
+#       "description": "The type(v) type is used.",
+#       "type": "number"
+#     },
+#     "model": {
+#       "description": "The type(v) type is used.",
+#       "type": "string"
+#     },
+#     "seats": {
+#       "description": "The type(v) type is used.",
+#       "type": "number"
+#     },
+#     "seller_type": {
+#       "description": "The type(v) type is used.",
+#       "type": "string"
+#     },
+#     "selling_price": {
+#       "description": "The type(v) type is used.",
+#       "type": "number"
+#     },
+#     "transmission_type": {
+#       "description": "The type(v) type is used.",
+#       "type": "string"
+#     },
+#     "vehicle_age": {
+#       "description": "The type(v) type is used.",
+#       "type": "number"
+#     }
+#   },
+#   "title": "SampleRecord",
+#   "type": "object"
+# }
+#     """
+
+    # Client Object
+    schema_registry_client = SchemaRegistryClient(schema_config()) 
+
+     # latest schema
+    schema = schema_registry_client.get_schema(schema_registry_client.get_latest_version(topic + "-value").schema_id)
+
+    # Create deserializer object
+    json_deserializer = JSONDeserializer(schema.schema_str,
                                          from_dict=Car.dict_to_car)
 
     consumer_conf = sasl_conf()

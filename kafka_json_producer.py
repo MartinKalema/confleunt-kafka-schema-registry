@@ -1,21 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-# Copyright 2020 Confluent Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-import argparse
 from uuid import uuid4
 from confluent_kafka import Producer
 from confluent_kafka.serialization import StringSerializer, SerializationContext, MessageField
@@ -115,81 +97,90 @@ def delivery_report(err, msg):
 
 def main(topic):
 
-    schema_str = """
-    {
-  "$id": "http://example.com/myURI.schema.json",
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "additionalProperties": false,
-  "description": "Sample schema to help you get started.",
-  "properties": {
-    "brand": {
-      "description": "The type(v) type is used.",
-      "type": "string"
-    },
-    "car_name": {
-      "description": "The type(v) type is used.",
-      "type": "string"
-    },
-    "engine": {
-      "description": "The type(v) type is used.",
-      "type": "number"
-    },
-    "fuel_type": {
-      "description": "The type(v) type is used.",
-      "type": "string"
-    },
-    "km_driven": {
-      "description": "The type(v) type is used.",
-      "type": "number"
-    },
-    "max_power": {
-      "description": "The type(v) type is used.",
-      "type": "number"
-    },
-    "mileage": {
-      "description": "The type(v) type is used.",
-      "type": "number"
-    },
-    "model": {
-      "description": "The type(v) type is used.",
-      "type": "string"
-    },
-    "seats": {
-      "description": "The type(v) type is used.",
-      "type": "number"
-    },
-    "seller_type": {
-      "description": "The type(v) type is used.",
-      "type": "string"
-    },
-    "selling_price": {
-      "description": "The type(v) type is used.",
-      "type": "number"
-    },
-    "transmission_type": {
-      "description": "The type(v) type is used.",
-      "type": "string"
-    },
-    "vehicle_age": {
-      "description": "The type(v) type is used.",
-      "type": "number"
-    }
-  },
-  "title": "SampleRecord",
-  "type": "object"
-}
-    """
-    schema_registry_conf = schema_config()
-    schema_registry_client = SchemaRegistryClient(schema_registry_conf) 
+#     schema_str = """
+#     {
+#   "$id": "http://example.com/myURI.schema.json",
+#   "$schema": "http://json-schema.org/draft-07/schema#",
+#   "additionalProperties": false,
+#   "description": "Sample schema to help you get started.",
+#   "properties": {
+#     "brand": {
+#       "description": "The type(v) type is used.",
+#       "type": "string"
+#     },
+#     "car_name": {
+#       "description": "The type(v) type is used.",
+#       "type": "string"
+#     },
+#     "engine": {
+#       "description": "The type(v) type is used.",
+#       "type": "number"
+#     },
+#     "fuel_type": {
+#       "description": "The type(v) type is used.",
+#       "type": "string"
+#     },
+#     "km_driven": {
+#       "description": "The type(v) type is used.",
+#       "type": "number"
+#     },
+#     "max_power": {
+#       "description": "The type(v) type is used.",
+#       "type": "number"
+#     },
+#     "mileage": {
+#       "description": "The type(v) type is used.",
+#       "type": "number"
+#     },
+#     "model": {
+#       "description": "The type(v) type is used.",
+#       "type": "string"
+#     },
+#     "seats": {
+#       "description": "The type(v) type is used.",
+#       "type": "number"
+#     },
+#     "seller_type": {
+#       "description": "The type(v) type is used.",
+#       "type": "string"
+#     },
+#     "selling_price": {
+#       "description": "The type(v) type is used.",
+#       "type": "number"
+#     },
+#     "transmission_type": {
+#       "description": "The type(v) type is used.",
+#       "type": "string"
+#     },
+#     "vehicle_age": {
+#       "description": "The type(v) type is used.",
+#       "type": "number"
+#     }
+#   },
+#   "title": "SampleRecord",
+#   "type": "object"
+# }
+#     """
+    
+    # client object
+    schema_registry_client = SchemaRegistryClient(schema_config()) 
+
+    # key serializer
     string_serializer = StringSerializer('utf_8') 
-    json_serializer = JSONSerializer(schema_str, schema_registry_client, car_to_dict) 
+
+    # latest schema
+    schema = schema_registry_client.get_schema(schema_registry_client.get_latest_version(topic + "-value").schema_id)
+
+
+    json_serializer = JSONSerializer(schema.schema_str, schema_registry_client, car_to_dict)
+
 
     producer = Producer(sasl_conf())
 
     print("Producing user records to topic {}. ^C to exit.".format(topic))
     #while True:
         # Serve on_delivery callbacks from previous calls to produce()
-    producer.poll(0.0)
+    producer.poll(5.0)
     try:
         for car in get_car_instance(file_path=FILE_PATH):
 
