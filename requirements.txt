@@ -1,0 +1,5 @@
+pandas
+requests
+confluent-kafka
+jsonschema
+pyspark==3.2.1
