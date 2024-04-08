@@ -1,1 +1,1 @@
-# confleunt-kafka-schema-registry
+# confluent-kafka-schema-registry
