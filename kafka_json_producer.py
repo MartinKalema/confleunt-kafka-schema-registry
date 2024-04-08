@@ -17,7 +17,6 @@
 
 import argparse
 from uuid import uuid4
-from six.moves import input
 from confluent_kafka import Producer
 from confluent_kafka.serialization import StringSerializer, SerializationContext, MessageField
 from confluent_kafka.schema_registry import SchemaRegistryClient
@@ -182,10 +181,10 @@ def main(topic):
 }
     """
     schema_registry_conf = schema_config()
-    schema_registry_client = SchemaRegistryClient(schema_registry_conf)
+    schema_registry_client = SchemaRegistryClient(schema_registry_conf) # Schema registry connection object
 
-    string_serializer = StringSerializer('utf_8')
-    json_serializer = JSONSerializer(schema_str, schema_registry_client, car_to_dict)
+    string_serializer = StringSerializer('utf_8') # Serialize the key
+    json_serializer = JSONSerializer(schema_str, schema_registry_client, car_to_dict) # Serialize json data
 
     producer = Producer(sasl_conf())
 
@@ -209,6 +208,6 @@ def main(topic):
         pass
 
     print("\nFlushing records...")
-    producer.flush()
+    producer.flush() # Clear buffer
 
-main("test_topic")
+main("topic_0")
