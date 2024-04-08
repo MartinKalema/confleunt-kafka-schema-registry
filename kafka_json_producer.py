@@ -21,7 +21,6 @@ from confluent_kafka import Producer
 from confluent_kafka.serialization import StringSerializer, SerializationContext, MessageField
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.json_schema import JSONSerializer
-#from confluent_kafka.schema_registry import *
 import pandas as pd
 from typing import List
 
@@ -181,10 +180,9 @@ def main(topic):
 }
     """
     schema_registry_conf = schema_config()
-    schema_registry_client = SchemaRegistryClient(schema_registry_conf) # Schema registry connection object
-
-    string_serializer = StringSerializer('utf_8') # Serialize the key
-    json_serializer = JSONSerializer(schema_str, schema_registry_client, car_to_dict) # Serialize json data
+    schema_registry_client = SchemaRegistryClient(schema_registry_conf) 
+    string_serializer = StringSerializer('utf_8') 
+    json_serializer = JSONSerializer(schema_str, schema_registry_client, car_to_dict) 
 
     producer = Producer(sasl_conf())
 
@@ -200,7 +198,6 @@ def main(topic):
                             key=string_serializer(str(uuid4()), car_to_dict),
                             value=json_serializer(car, SerializationContext(topic, MessageField.VALUE)),
                             on_delivery=delivery_report)
-            break
     except KeyboardInterrupt:
         pass
     except ValueError:
@@ -208,6 +205,6 @@ def main(topic):
         pass
 
     print("\nFlushing records...")
-    producer.flush() # Clear buffer
+    producer.flush() 
 
 main("topic_0")
