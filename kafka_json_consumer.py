@@ -2,16 +2,19 @@ from confluent_kafka import Consumer
 from confluent_kafka.serialization import SerializationContext, MessageField
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.json_schema import JSONDeserializer
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
-API_KEY = 'E2YGQQM72GSVUFA4'
-ENDPOINT_SCHEMA_URL  = 'https://psrc-9jzo5.us-central1.gcp.confluent.cloud'
-API_SECRET_KEY = 'emXnHoh11pc7jctD6CBSkgT+K2lMHEm5EGf+WBGMIXpM8FUZJqMHFTqeX4lDYB6T'
-BOOTSTRAP_SERVER = 'pkc-12576z.us-west2.gcp.confluent.cloud:9092'
-SECURITY_PROTOCOL = 'SASL_SSL'
-SSL_MACHENISM = 'PLAIN'
-SCHEMA_REGISTRY_API_KEY = 'P5U2TEKAHVBFPHZU'
-SCHEMA_REGISTRY_API_SECRET = 'TeIuTyU0PhRU3HWEYLmUmi2boTsZx1NZL4p+RDgczQq28XovwwxYj4Wg/G8/vqE4'
+API_KEY = os.getenv('API_KEY')
+ENDPOINT_SCHEMA_URL  = os.getenv('ENDPOINT_SCHEMA_URL')
+API_SECRET_KEY = os.getenv('API_SECRET_KEY')
+BOOTSTRAP_SERVER = os.getenv('BOOTSTRAP_SERVER')
+SECURITY_PROTOCOL = os.getenv('SECURITY_PROTOCOL')
+SSL_MACHENISM = os.getenv('SSL_MACHENISM')
+SCHEMA_REGISTRY_API_KEY = os.getenv('SCHEMA_REGISTRY_API_KEY')
+SCHEMA_REGISTRY_API_SECRET = os.getenv('SCHEMA_REGISTRY_API_SECRET')
 
 def sasl_conf():
 
